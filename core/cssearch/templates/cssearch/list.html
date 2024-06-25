@@ -1,0 +1,24 @@
+{% extends 'tasks/base.html' %}
+{% block content %}
+<h3>to do list....</h3>
+<form class="form" action="/" method="POST">
+    {% csrf_token %}
+    {{ form.title  }}
+    <input class="btn btn-primary btn-sm" type="submit" name="create task">
+</form>
+<ol class="list-group list-group-numbered">
+    {% for task in tasks  %} 
+        {% if task.complete == True %}
+            <strike> <li class="list-group-item"> {{task}}</strike> 
+            <a class="btn btn-outline-info btn-sm" href={% url 'update_task' task.id %}> Update </a>
+            <a class="btn btn-outline-danger btn-sm" href={% url 'delete_task' task.id %}> Delete </a> 
+            </li>
+        {% else %}    
+            <li class="list-group-item"> {{task}} 
+            <a class="btn btn-outline-info btn-sm" href={% url 'update_task' task.id %}> Update </a>
+            <a class="btn btn-outline-danger btn-sm" href={% url 'delete_task' task.id %}> Delete </a> 
+            </li>
+        {% endif %}
+    {% endfor %}
+</ol>
+{% endblock %}    

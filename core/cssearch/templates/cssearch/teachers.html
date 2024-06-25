@@ -1,0 +1,41 @@
+{% extends 'cssearch/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+
+<table class="table">
+    <tr>
+        <thead>
+            <th> Teacher Name </th>
+            <th> Father Name </th>
+            <th> Qualification </th>
+            <th> Prof Qualification </th>
+            <th> Gender </th>
+            <th> Date of Appointment </th>
+
+        </thead>
+    </tr>
+    
+    {% for teacher in teachers  %}
+    <tr>
+        
+        <td> {{ teacher.beneficiaryname }} </td>
+        <td> {{ teacher.father_husband_name }}        </td>
+        <td>{{ teacher.qualification }}</td>
+        <td>{{ teacher.profq }}</td>
+        <td> {{ teacher.gender }} </td>
+        <td> {{ teacher.appoint_date}} </td>
+            
+    </tr>
+    
+    
+    {% endfor %}
+    
+
+</table>
+   
+<a href={% url 'test-page' %} > << Click to go back </a>
+{% endblock %}
+
+

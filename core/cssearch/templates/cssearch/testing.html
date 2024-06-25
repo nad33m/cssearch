@@ -1,0 +1,110 @@
+{% extends 'cssearch/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+    <form class="form" method="get" action="{% url 'test-page' %}">
+        {% csrf_token %}
+        <input value="{{ request.GET.q }}" id="query" name="q" required>
+        <button class="btn btn-success border-start-0 border rounded-pill ms-n3 " type="submit" >  <i class="fa fa-search"></i></button>
+        <button type="submit" class="btn btn-primary">
+          Search CS
+        </button>
+    </form>
+    {% if total_records == 0  %}
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+      <div>
+        No record found for {{ request.GET.q }} try another query 
+      </div>
+    </div>
+    {% else %}
+    <div class="alert alert-primary d-flex align-items-center" role="alert">
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+      <div>
+        <strong> {{ total_records }} </strong> records found, for the query '{{ request.GET.q }}'
+      </div>
+    </div>
+    {% endif %}
+    
+<table class="table">
+    <tr>
+        <thead>
+            <th> School Code </th>
+            <th> School Name </th>
+            <th> Region </th>
+            <th> District </th>
+            <th> Tehsil </th>
+            <th> - </th>
+            <th> + </th>
+        </thead>
+    </tr>
+    {% for school in schools  %}
+    <tr>
+        <td> <a href={% url 'show_teacher' school.scode %} > {{ school.scode }} </a> </td>
+        <td>{{ school.sname }}  ({{ school.id }})</td>
+        <td>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{ school.scode }}">
+            Launch teacher info
+          </button>           
+        </td>
+        <td>{{ school.did }}</td>
+        <td>{{ school.tid }}</td>
+
+            <td> <a href={% url 'update_school' school.id %} > Edit </a> </td>
+            <td> + </td>
+    </tr>
+    
+    {% endfor %}
+</table>
+{% regroup teachers by scode as teacher_list %}
+
+{% for group in teacher_list %}
+
+<div class="modal fade" id="exampleModal{{ group.grouper }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{ group.schoolname }} </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul>
+            {% for teacher in group.list %}
+              <li>Teacher Name: {{ teacher.beneficiaryname }} </li>
+              <li>  </li>
+              <li> Father/Husband Name: {{ teacher.father_husband_name }}        </li>
+              <li>Qualification: {{ teacher.qualification }}</li>
+              <li>Prof Qualification: {{ teacher.profq }}</li>
+              <li> Gender: {% if teacher.gender == 'Male' %}
+                            {{ teacher.gender }}
+                           {% else %}
+                            FEMALE 
+                          {% endif %} 
+                           
+              </li>
+              <li> Appointment Date: {{ teacher.appoint_date | date }} </li>
+              <hr class="">
+            {% empty %}
+              <li>No teachers found for this school.</li>
+            {% endfor %}
+
+          </ul>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+{% endfor %}
+
+{% endblock %}
